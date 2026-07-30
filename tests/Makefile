@@ -1,5 +1,5 @@
 # Define test component directories
-TEST_DIRS = $(dir $(wildcard */))
+TEST_DIRS = $(dir $(wildcard */.))
 
 # Default rule: run all tests
 .PHONY: all $(TEST_DIRS)
@@ -8,14 +8,14 @@ all: $(TEST_DIRS)
 # Run tests
 $(TEST_DIRS):
 	make -C $@
-	
+
 # Clean tests
 .PHONY: clean
 clean:
-	$(foreach DIR, $(TEST_DIRS), make -C $(DIR) clean)
+	$(foreach DIR, $(TEST_DIRS), make -C $(DIR) clean;)
 
-# Clean tests
+# Echo for debug
 .PHONY: echo
 echo:
 	@echo 'TEST_DIRS=$(TEST_DIRS)'
-	$(foreach DIR, $(TEST_DIRS), make -C $(DIR) echo)
+	$(foreach DIR, $(TEST_DIRS), make -C $(DIR) echo;)

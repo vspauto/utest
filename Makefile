@@ -23,16 +23,18 @@
 
 # Settings
 SRC_DIR = ./src
-TEST_DIR = ./utests
+TEST_DIR = ./tests
 BUILD_DIR = .
 TARGET = app
+SUBDIRS := $(wildcard */)
 
 C_SRCS = $(SRC_DIR)/main.c
+C_SRCS += $(SRC_DIR)/ring_buffer.c
 C_SRCS += $(wildcard $(SRC_DIR)/average/*.c)
 C_OBJS = $(patsubst %.c, %.o, $(C_SRCS))
 
 CFLAGS += -Wall
-CFLAGS += -I$(SRC_DIR)/average
+# CFLAGS += -I$(SRC_DIR)/average
 LDFLAGS += 
 
 # Default rule: build application
@@ -40,7 +42,7 @@ LDFLAGS +=
 all: $(TARGET)
 
 # Build Components
-$(C_OBJS) : %.o : %.c
+$(C_OBJS): %.o : %.c
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
@@ -49,27 +51,29 @@ $(C_OBJS) : %.o : %.c
 $(TARGET) : $(C_OBJS)
 	$(CC) $(LDFLAGS) -o $@ $^
 
+# Clean
+.PHONY: clean
+clean:
+	rm -f $(C_OBJS) $(TARGET)
+
 # Echo for debug
 .PHONY: echo
 echo:
 	@echo 'C_SRCS= $(C_SRCS)'
 	@echo 'TEST_DIR= $(TEST_DIR)'
-
-.PHONY: clean
-clean:
-	rm -f $(C_OBJS) $(TARGET)
+	@echo 'SUBDIRS = $(SUBDIRS)'
 
 #--------------------------------------
 # Unit Test
-.PHONY: utest
-utest:
-	make –C $(TEST_DIR)
+.PHONY: test
+test:
+	make -C $(TEST_DIR)
 
-.PHONY: utest_clean
-utest_clean:
-	make –C $(TEST_DIR) clean
+.PHONY: test_clean
+test_clean:
+	make -C $(TEST_DIR) clean
 
-.PHONY: utest_echo
-utest_echo:
+.PHONY: test_echo
+test_echo:
 	@echo 'TEST_DIR= $(TEST_DIR)'
-	make –C $(TEST_DIR) echo
+	make -C $(TEST_DIR) echo
